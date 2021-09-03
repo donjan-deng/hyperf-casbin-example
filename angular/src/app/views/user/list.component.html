@@ -1,0 +1,128 @@
+<div class="table-operations">
+    <form nz-form nzLayout="inline">
+        <nz-form-item>
+            <nz-form-label><label>用户名</label></nz-form-label>
+            <nz-form-control>
+                <nz-input-group>
+                    <input type="text" nz-input [(ngModel)]='params.username' name="username"
+                        (ngModelChange)="search()" />
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label><label>创建时间</label></nz-form-label>
+            <nz-form-control>
+                <nz-range-picker [nzFormat]="'yyyy-MM-dd'" [(ngModel)]='params.date_range' name='date_range'
+                    (ngModelChange)='selectDate()'>
+                </nz-range-picker>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label><label>状态</label></nz-form-label>
+            <nz-form-control>
+                <nz-select [(ngModel)]="params.status" name='status' (ngModelChange)="search()">
+                    <nz-option nzLabel="全部" [nzValue]="''"></nz-option>
+                    <nz-option nzLabel="正常" [nzValue]="1"></nz-option>
+                    <nz-option nzLabel="禁用" [nzValue]="0"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item *appCan="{perms:app.perms,check:[['/admin/users','post']]}">
+            <nz-form-control>
+                <button nz-button [nzType]="'success'" (click)="add()">添加用户</button>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</div>
+<nz-table nzBordered nzShowSizeChanger [nzData]="list" [nzFrontPagination]="false" [nzLoading]="params.loading"
+    [nzTotal]="params.total" [nzPageSize]="params.per_page" [nzPageIndex]="params.page"
+    (nzQueryParams)="onQueryParamsChange($event)" [nzPageSizeOptions]='pageSizeOption' [nzShowTotal]="rangeTemplate">
+    <thead>
+        <tr>
+            <th>用户名</th>
+            <th>角色</th>
+            <th>创建时间</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor='let m of list'>
+            <td>{{m.username}}</td>
+            <td>{{m.roles.join(',')}}</td>
+            <td>{{m.created_at}}</td>
+            <td>{{m.status_text}}</td>
+            <td>
+                <nz-space>
+                    <ng-container *appCan="{perms:app.perms,check:[['/admin/users/:id','put']]}">
+                        <button *nzSpaceItem nz-button nzType="primary" (click)='edit(m)'><i nz-icon nzType="edit"
+                                nzTheme="outline"></i>编辑</button>
+                    </ng-container>
+                    <ng-container *appCan="{perms:app.perms,check:[['/admin/users/:id/roles','put']]}">
+                        <button *nzSpaceItem nz-button nzType="info" (click)='editRole(m)'>分配角色</button>
+                    </ng-container>
+                </nz-space>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+<ng-template #rangeTemplate let-range="range" let-total>
+    {{ range[0] }}-{{ range[1] }} 共{{ total }}条数据
+</ng-template>
+<nz-modal [(nzVisible)]="dialog.visible" nzTitle="用户管理" (nzOnCancel)="close()" (nzOnOk)="save()"
+    [nzOkLoading]="dialog.loading" [nzMaskClosable]='false'>
+    <form nz-form [formGroup]="form">
+        <nz-form-item>
+            <nz-form-label [nzSm]="4">用户名</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-input-group>
+                    <input type="text" nz-input formControlName="username" />
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="4">密码</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-input-group>
+                    <input type="password" nz-input placeholder="密码,不修改留空" formControlName="password" />
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="4">确认密码</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-input-group>
+                    <input type="password" nz-input placeholder="确认密码,不修改留空" formControlName="confirm_password" />
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="4">状态</nz-form-label>
+            <nz-form-control [nzSm]="8">
+                <nz-radio-group formControlName="status">
+                    <label nz-radio [nzValue]="1">正常</label>
+                    <label nz-radio [nzValue]="0">禁用</label>
+                </nz-radio-group>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</nz-modal>
+<!-- 权限分配 -->
+<nz-modal [(nzVisible)]="roleDialog.visible" nzTitle="权限分配" (nzOnCancel)="closeRole()" (nzOnOk)="saveRole()"
+    [nzOkLoading]="roleDialog.loading" [nzMaskClosable]='false'>
+    <form nz-form [formGroup]="roleForm">
+        <nz-form-item>
+            <nz-form-label [nzSm]="4">用户名</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-input-group>
+                    {{roleForm.get('username').value}}
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzSm]="20" [nzOffset]='4'>
+                <nz-checkbox-group formControlName="roles"></nz-checkbox-group>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</nz-modal>

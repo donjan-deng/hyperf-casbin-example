@@ -1,0 +1,29 @@
+<form nz-form [formGroup]="form">
+    <nz-form-item>
+        <nz-form-label nzSpan="4">用户名</nz-form-label>
+        <nz-form-control nzSpan="20" *ngIf="app.user">
+            {{app.user.username}}
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label nzSpan="4">密码</nz-form-label>
+        <nz-form-control nzSpan="8">
+            <nz-input-group>
+                <input type="password" nz-input placeholder="密码,不修改留空" formControlName="password" />
+            </nz-input-group>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label nzSpan="4">确认密码</nz-form-label>
+        <nz-form-control nzSpan="8">
+            <nz-input-group>
+                <input type="password" nz-input placeholder="确认密码,不修改留空" formControlName="confirm_password" />
+            </nz-input-group>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-control nzSpan="8" nzOffset="4">
+            <button nz-button nzType="primary" nzBlock (click)="save()" [nzLoading]="loading">保存</button>
+        </nz-form-control>
+    </nz-form-item>
+</form>

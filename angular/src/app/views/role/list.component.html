@@ -1,0 +1,68 @@
+<div class="table-operations">
+    <form nz-form nzLayout="inline">
+        <nz-form-item *appCan="{perms:app.perms,check:[['/admin/roles','post']]}">
+            <nz-form-control>
+                <button nz-button [nzType]="'success'" (click)="add()">添加角色</button>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</div>
+<nz-table nzBordered nzShowSizeChanger [nzData]="list" [nzFrontPagination]="false" [nzLoading]="params.loading"
+    [nzTotal]="params.total" [nzPageSize]="params.per_page" [nzPageIndex]="params.page"
+    (nzQueryParams)="onQueryParamsChange($event)" [nzPageSizeOptions]='pageSizeOption' [nzShowTotal]="rangeTemplate">
+    <thead>
+        <tr>
+            <th nzShowSort nzColumnKey="name" [nzSortFn]="true">
+                角色名称
+            </th>
+            <th>
+                说明
+            </th>
+            <th>
+                操作
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor='let m of list'>
+            <td>{{m.name}}</td>
+            <td>{{m.description}}</td>
+            <td>
+                <button *appCan="{perms:app.perms,check:[['/admin/roles/:id','put']]}" nz-button nzType="primary"
+                    (click)='edit(m)'><i nz-icon nzType="edit" nzTheme="outline"></i>编辑</button>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+<ng-template #rangeTemplate let-range="range" let-total>
+    {{ range[0] }}-{{ range[1] }} 共{{ total }}条数据
+</ng-template>
+<nz-modal [(nzVisible)]="dialog.visible" nzTitle="角色管理" (nzOnCancel)="close()" (nzOnOk)="save()"
+    [nzOkLoading]="dialog.loading" [nzMaskClosable]='false'>
+    <form nz-form [formGroup]="form">
+        <nz-form-item>
+            <nz-form-label [nzSm]="4">角色名称</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-input-group>
+                    <input type="text" nz-input formControlName="name" />
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="4">说明</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-input-group>
+                    <textarea rows="2" nz-input formControlName="description"></textarea>
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item *ngIf='permissionService.nodes'>
+            <nz-form-label [nzSm]="4">权限</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-tree #nzTreeComponent nzAsyncData [nzData]="permissionService.nodes" nzCheckable
+                    [nzCheckedKeys]="checkedKeys" nzCheckStrictly>
+                </nz-tree>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</nz-modal>

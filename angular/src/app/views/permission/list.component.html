@@ -1,0 +1,74 @@
+<div class="table-operations">
+    <form nz-form nzLayout="inline">
+        <nz-form-item>
+            <nz-form-control>
+                右键添加编辑
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</div>
+<nz-tree #nzTreeComponent nzAsyncData [nzData]="permissionService.nodes" [nzTreeTemplate]="nzTreeTemplate"
+    (nzContextMenu)="activeNode($event)">
+</nz-tree>
+<ng-template #nzTreeTemplate let-node>
+    <span class="custom-node" [class.active]="activedNode?.key === node.key">
+        <span *ngIf="!node.isLeaf" (contextmenu)="contextMenu($event, menu)">
+            <span class="folder-name">{{ node.title }}</span>
+        </span>
+        <span *ngIf="node.isLeaf" (contextmenu)="contextMenu($event, menu)">
+            <span class="file-name">{{ node.title }}</span>
+        </span>
+    </span>
+</ng-template>
+<nz-dropdown-menu #menu="nzDropdownMenu">
+    <ul nz-menu>
+        <li *appCan="{perms:app.perms,check:[['/admin/users','post']]}" nz-menu-item (click)="add()">添加节点</li>
+        <li *appCan="{perms:app.perms,check:[['/admin/users/:id','put']]}" nz-menu-item (click)="edit($event)">编辑节点</li>
+    </ul>
+</nz-dropdown-menu>
+<nz-modal [(nzVisible)]="dialog.visible" nzTitle="节点管理" (nzOnCancel)="close()" (nzOnOk)="save()"
+    [nzOkLoading]="dialog.loading" [nzMaskClosable]='false'>
+    <form nz-form [formGroup]="form">
+        <nz-form-item>
+            <nz-form-label [nzSm]="4">上级节点</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-tree-select nzAsyncData [nzAllowClear]='false' [nzNodes]="selectNodes" nzDefaultExpandAll
+                    nzPlaceHolder="Please select" formControlName="parent_id">
+                </nz-tree-select>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="4">节点路径</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-input-group>
+                    <input type="text" nz-input formControlName="path" />
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="4">显示名称</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-input-group>
+                    <input type="text" nz-input formControlName="display_name" />
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="4">请求方法</nz-form-label>
+            <nz-form-control [nzSm]="8">
+                <nz-select formControlName="method">
+                    <nz-option nzValue="GET" nzLabel="GET"></nz-option>
+                    <nz-option nzValue="POST" nzLabel="POST"></nz-option>
+                    <nz-option nzValue="PUT" nzLabel="PUT"></nz-option>
+                    <nz-option nzValue="DELETE" nzLabel="DELETE"></nz-option>
+                </nz-select>
+            </nz-form-control>
+            <nz-form-label [nzSm]="4">排序</nz-form-label>
+            <nz-form-control [nzSm]="8">
+                <nz-input-group>
+                    <input type="text" nz-input formControlName="sort" />
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</nz-modal>

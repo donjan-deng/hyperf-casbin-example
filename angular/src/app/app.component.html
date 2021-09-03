@@ -1,0 +1,56 @@
+<nz-layout style=" height: auto;">
+  <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed"
+    style="height: auto;min-height: 100vh;overflow: hidden; display: block;">
+    <div class="logo">Angular</div>
+    <ul nz-menu [nzTheme]="'dark'" [nzMode]="'inline'">
+      <li nz-submenu [nzOpen]='true' nzTitle="系统管理" nzIcon="folder"
+        *appCan="{perms:app.perms,check:[['/admin','get']]}">
+        <ul>
+          <li *appCan="{perms:app.perms,check:[['/admin/users','get']]}" nz-menu-item
+            routerLinkActive="ant-menu-item-selected">
+            <a routerLink="/users">用户管理</a>
+          </li>
+          <li *appCan="{perms:app.perms,check:[['/admin/roles','get']]}" nz-menu-item
+            routerLinkActive="ant-menu-item-selected">
+            <a routerLink="/roles">角色管理</a>
+          </li>
+          <li *appCan="{perms:app.perms,check:[['/admin/permissions','get']]}" nz-menu-item
+            routerLinkActive="ant-menu-item-selected">
+            <a routerLink="/permissions">节点管理</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nz-sider>
+  <nz-layout style="height: auto; min-height: 100vh; display: block; overflow: hidden;">
+    <nz-header style="background: #fff; padding:0; height: 46px; line-height: 46px;">
+      <i class="trigger" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+        (click)="isCollapsed = !isCollapsed"></i>
+      <div *ngIf='app.user' style="float: right; padding-right: 10px;">
+        <a nz-button nzType="text" href="/" target="_blank"><i nz-icon nzType="global" nzTheme="outline"></i>前台首页</a>
+        <button nz-button nz-dropdown nzType="text" [nzDropdownMenu]="admin_menu" nzPlacement="bottomCenter"><i nz-icon
+            nzType="setting" nzTheme="outline"></i>{{app.user.username}}</button>
+        <nz-dropdown-menu #admin_menu="nzDropdownMenu">
+          <ul nz-menu>
+            <li nz-menu-item><a routerLink="/profile">个人资料</a></li>
+            <li nz-menu-item><a (click)="logout()">退出登录</a></li>
+          </ul>
+        </nz-dropdown-menu>
+      </div>
+    </nz-header>
+    <nz-content style="margin:0;">
+      <ul nz-menu nzMode="horizontal">
+        <li nz-menu-item nzMatchRouter *ngFor="let menu of menuList">
+          <a [routerLink]="menu.path" (dblclick)="closeUrl(menu.path,menu.select)">{{ menu.title }}</a>
+        </li>
+      </ul>
+      <nz-card>
+        <router-outlet></router-outlet>
+      </nz-card>
+    </nz-content>
+    <nz-footer>Ant Design Implement By Angular</nz-footer>
+  </nz-layout>
+</nz-layout>
+<ng-template #trigger>
+  <i nz-icon nzType="up"></i>
+</ng-template>

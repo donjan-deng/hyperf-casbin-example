@@ -1,0 +1,42 @@
+.trigger {
+    font-size: 18px;
+    line-height: 46px;
+    height:46px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .trigger:hover {
+    color: #1890ff;
+  }
+
+  .logo {
+    height: 32px;
+    line-height:32px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color:rgba(255, 255, 255, 0.698);
+    margin: 16px;
+  }
+  .ant-tabs-tab:focus{
+    outline:none;
+  }
+  .ant-tabs-tab-active {
+    border-bottom: 3px solid #1890ff
+  }
+  .ant-tabs-tab a{
+    padding:10px;
+    color:rgba(1, 12, 25, 0.68);
+  }
+  .ant-tabs-tab a:hover{
+    color:#1890ff;
+  }
+  .ant-tabs-tab-active a{
+    color:#1890ff;
+    font-weight:500;
+  }
+  nz-footer {
+    text-align: center;
+  }
