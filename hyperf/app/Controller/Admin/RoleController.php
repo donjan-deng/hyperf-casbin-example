@@ -46,6 +46,9 @@ class RoleController extends AbstractController
             throw new AppBadRequestException("请求资源不存在");
         }
         unset($data['permissions']);
+        if (isset($data['name'])) {
+            unset($data['name']);
+        }
         $result->update($data);
         $perms = Permission::whereIn('id', $permissions)->get();
         $rows = [];

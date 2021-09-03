@@ -55,13 +55,14 @@ export class RoleListComponent implements OnInit {
   add() {
     Helper.resetForm(this.form);
     this.form.get('id').setValue(0);
+    this.form.get('name').reset({ value: '', disabled: false });
     this.checkedKeys = [];
     this.dialog.visible = true;
   }
   edit(model) {
     Helper.resetForm(this.form);
     this.form.get('id').setValue(model.id);
-    this.form.get('name').setValue(model.name);
+    this.form.get('name').reset({ value: model.name, disabled: true });
     this.form.get('description').setValue(model.description);
     this.checkedKeys = model.permissions;
     this.dialog.visible = true;
@@ -73,6 +74,9 @@ export class RoleListComponent implements OnInit {
       const checkPerms = this.getCheckPerms(this.nzTreeComponent.getTreeNodes());
       this.form.get('permissions').setValue(checkPerms);
       const data = this.form.value;
+      if (data.id > 0 && !data.name) {
+        data.name = '111';
+      }
       let service = this.roleService.store(data);
       if (data.id > 0) {
         service = this.roleService.update(data);
